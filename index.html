@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Invoice Generator</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th,
+    table td {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+
+    input {
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+
+    .totals td {
+      font-weight: bold;
+    }
+
+    .client-info {
+      margin-bottom: 30px;
+    }
+
+    .client-info label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #downloadBtn {
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #downloadBtn:hover {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+    }
+
+    .small-input {
+      width: 200px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ Wrap everything you want to download in a container -->
+  <div id="invoiceContent">
+
+    <div class="title-container">
+      <h1 class="title-text">Invoice Generator</h1>
+    </div>
+
+
+    <div class="client-info">
+      <label>Client Name: <input type="text" id="clientName" placeholder="Enter client name"></label>
+      <label for="clientNumber">Client Number:<input type="number" id="clientNumber" name="clientNumber"
+          class="input-field" placeholder="Enter client number" /></label>
+      <label>Client Email: <input type="email" id="clientEmail" placeholder="Enter email address"></label>
+      <label>Client City: <input type="text" id="clientCity" placeholder="Enter city"></label>
+    </div>
+
+    <label for="invoiceDate">Invoice Date:</label>
+    <input type="date" id="invoiceDate" class="small-input input-field" />
+
+    <table id="invoiceTable">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="invoiceBody">
+        <tr class="item-row">
+          <td><input type="text" class="desc" placeholder="Item description" /></td>
+          <td><input type="number" class="price" value="0" min="0" /></td>
+          <td><input type="number" class="quantity" value="1" min="0" /></td>
+          <td class="amount">0.00</td>
+          <td><button class="delete-btn" onclick="deleteRow(this)">❌</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="add-item-btn" onclick="addItemRow()">➕ Add Item</button>
+
+    <br><br>
+
+    <label>Tax (%) <input type="number" id="taxPercent" value="0"></label>
+    <label>Discount (%) <input type="number" id="discountPercent" value="0"></label>
+
+    <table class="totals">
+      <tr>
+        <td>Subtotal:</td>
+        <td id="subtotal">0.00</td>
+      </tr>
+      <tr>
+        <td>Tax:</td>
+        <td id="taxAmount">0.00</td>
+      </tr>
+      <tr>
+        <td>Discount:</td>
+        <td id="discountAmount">0.00</td>
+      </tr>
+      <tr>
+        <td>Grand Total:</td>
+        <td id="grandTotal">0.00</td>
+      </tr>
+    </table>
+    <!-- ✅ PDF Button -->
+    <button id="downloadBtn" type="button">⬇ Download as PDF</button>
+
+
+  </div>
+  
+
+
+  <!-- JS & PDF Lib -->
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("invoiceDate").valueAsDate = new Date();
+      attachListeners();
+      calculateTotals();
+    });
+
+    function calculateTotals() {
+      let totalBeforeTax = 0;
+
+      document.querySelectorAll(".item-row").forEach(row => {
+        const qty = parseFloat(row.querySelector(".quantity").value) || 0;
+        const price = parseFloat(row.querySelector(".price").value) || 0;
+        const amount = qty * price;
+        row.querySelector(".amount").textContent = amount.toFixed(2);
+        totalBeforeTax += amount;
+      });
+
+      const taxPercent = parseFloat(document.getElementById("taxPercent").value) || 0;
+      const discountPercent = parseFloat(document.getElementById("discountPercent").value) || 0;
+
+      const taxAmount = totalBeforeTax * (taxPercent / 100);
+      const discountAmount = totalBeforeTax * (discountPercent / 100);
+      const grandTotal = totalBeforeTax + taxAmount - discountAmount;
+
+      document.getElementById("subtotal").textContent = totalBeforeTax.toFixed(2);
+      document.getElementById("taxAmount").textContent = taxAmount.toFixed(2);
+      document.getElementById("discountAmount").textContent = discountAmount.toFixed(2);
+      document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
+    }
+
+    function attachListeners() {
+      document.querySelectorAll(".price, .quantity, #taxPercent, #discountPercent").forEach(input => {
+        input.addEventListener("input", calculateTotals);
+      });
+    }
+
+    function addItemRow() {
+  const tableBody = document.getElementById("invoiceBody");
+  const row = document.createElement("tr");
+  row.className = "item-row";
+
+  row.innerHTML = `
+    <td><input type="text" class="desc" placeholder="Item description" /></td>
+    <td><input type="number" class="price" value="0" min="0" /></td>
+    <td><input type="number" class="quantity" value="1" min="0" /></td>
+    <td class="amount">0.00</td>
+    <td><button class="delete-btn" onclick="deleteRow(this)">❌</button></td>
+  `;
+
+  tableBody.appendChild(row);
+  attachListeners(); // Needed to attach calculation listeners
+  calculateTotals(); // Recalculate total
+}
+
+     function deleteRow(button) {
+      const row = button.closest("tr");
+      row.remove();
+      calculateTotals();
+    }
+
+    // ✅ PDF Download function
+   function downloadPDF() {
+      const confirmDownload = confirm("🔍 Do you want to preview and download the invoice as a PDF?");
+      if (!confirmDownload) return;
+
+      const invoice = document.getElementById("invoiceContent");
+
+      const opt = {
+        margin: 0.5,
+        filename: 'invoice.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(invoice).save();
+    }
+    // Add event listener to button
+  document.getElementById("downloadBtn").addEventListener("click", downloadPDF);
+
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</body>
+
+</html>

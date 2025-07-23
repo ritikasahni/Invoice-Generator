@@ -1,0 +1,123 @@
+/* Reset and base styling */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-image: linear-gradient(to top, #fbc2eb 0%, #7088b2 100%);
+  color: #333;
+}
+
+/* Attractive Title */
+.title-container {
+  background: linear-gradient(to right, #4e54c8, #8f94fb); /* Blue to purple */
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.title-text {
+  font-size: 36px;
+  font-weight: bold;
+  color: white; /* Make it visible over gradient */
+  margin: 0;
+}
+
+
+
+/* Invoice container */
+.invoice-container {
+  max-width: 800px;
+  margin: auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+h1,
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #181616;
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+  border: 1px solid #1e30d6;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+/* File Input */
+input[type="file"] {
+  margin-top: 10px;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+/* Sections */
+.client-info,
+.invoice-info,
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.client-info > div,
+.invoice-info > div,
+.totals > div {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Smaller Date Input */
+.small-input {
+  width: 150px;
+  padding: 6px 10px;
+  font-size: 14px;
+  margin: 10px 0 5px;
+}
+
+/* Invoice Table */
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+#downloadBtn {
+  display: block;
+  margin: 20px auto;
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#downloadBtn:hover {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  transform: scale(1.03);
+}
+
